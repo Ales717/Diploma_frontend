@@ -19,6 +19,9 @@ const Home = lazy(() => import('pages/Home'))
 
 /* Private routes */
 
+const Orders = lazy(() => import('pages/orders/index'))
+const OrderDetail = lazy(() => import('pages/orders/OrderDetail'))
+
 /* Restricted routes */
 const Login = lazy(() => import('pages/Login'))
 const Register = lazy(() => import('pages/Register'))
@@ -40,7 +43,16 @@ export const AppRoutes: AppRoute[] = [
   },
 
   // Private Routes
-
+  {
+    type: RouteType.PRIVATE,
+    path: '/orders',
+    children: <Orders />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/orders/orderdetail/:id',
+    children: <OrderDetail />,
+  },
   // Public Routes
   {
     type: RouteType.PUBLIC,

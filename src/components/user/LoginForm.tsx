@@ -27,7 +27,6 @@ const LoginForm = () => {
 
     const onSubmit = handleSubmit(async (data: LoginUserFields) => {
         const response = await API.login(data)
-        console.log(response)
         if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
             setApiError(response.data.message)
             setShowError(true)
@@ -106,12 +105,7 @@ const LoginForm = () => {
                     <Button className="w-100 btn btn-success mb-2" type="submit">
                         Sing in
                     </Button>
-                    <Button className="w-100 btn btn-light mb-2 p-0">
-                        <FcGoogle className='login-icon' /> Sing in with Google
-                    </Button>
-                    <Button className="w-100 btn btn-primary p-0">
-                        <FaFacebook className='login-icon' /> Sing in with Facebook
-                    </Button>
+
                 </Form>
                 <div className="d-flex flex-column mb-4 pb-4">
                     <div className="d-flex justify-content-between">

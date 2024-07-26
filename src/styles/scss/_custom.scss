@@ -12,6 +12,7 @@
 
 .layout-container {
   height: calc(100vh - 200px);
+  margin-left: 250px !important;
 }
 
 .login-form,
@@ -21,6 +22,56 @@
   margin: 0 auto;
   padding: 25px 0;
 }
+
+.sidebar {
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #949494;
+  padding-top: 20px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.sidebar-brand {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000;
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.sidebar-nav {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-item {
+  margin-bottom: 20px;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+
+.sidebar-link:hover {
+  background-color: #ddd;
+}
+
 
 .btn-success,
 .btn-success:hover,
