@@ -2,5 +2,7 @@ export enum routes {
   LOGIN = '/login',
   SIGNUP = '/signup',
   HOME = '/',
-  ORDERS = '/orders'
+  ORDERS = '/orders',
+  WORKERS = '/workers',
+  ADDWORKER = '/workers/addworker'
 }

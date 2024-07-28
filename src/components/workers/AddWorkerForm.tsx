@@ -11,7 +11,7 @@ import ToastContainer from 'react-bootstrap/ToastContainer'
 import Toast from 'react-bootstrap/Toast'
 import { routes } from 'constants/routesConstants'
 
-const RegisterForm = () => {
+const AddWorkerForm = () => {
     const navigate = useNavigate()
     const { handleSubmit, errors, control } = useRegisterForm()
     const [apiError, setApiError] = useState('')
@@ -27,7 +27,8 @@ const RegisterForm = () => {
     }
 
     const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
-        const response = await API.createUser({ ...data, role: 'ADMIN' })
+        const response = await API.createUser({ ...data, role: 'WORKER' })
+        console.log(response)
         if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
             setApiError(response.data.message)
             setShowError(true)
@@ -35,30 +36,14 @@ const RegisterForm = () => {
             setApiError(response.data.message)
             setShowError(true)
         } else {
-
-            const loginResponse = await API.login({
-                email: data.email,
-                password: data.password,
-            })
-            if (loginResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
-                setApiError(loginResponse.data.message)
-                setShowError(true)
-            } else if (loginResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-                setApiError(loginResponse.data.message)
-                setShowError(true)
-            } else {
-
-                authStore.login(loginResponse.data)
-                navigate('/')
-            }
+            navigate('/workers')
         }
     })
 
     return (
         <>
-            <div className='d-flex flex-column align-items-center justify-content-center'>
-                <h2 className="display-5 fw-bold">Sing up</h2>
-                <p className='text-center  w-75'>Your name will apperar on posts and you public profile.</p>
+            <div className='d-flex flex-column align-items-center justify-content-center pt-4'>
+                <h2 className="display-5 fw-bold pt-4">Add Worker</h2>
                 <Form className="register-form pt-0" onSubmit={onSubmit}>
                     <Controller
                         control={control}
@@ -207,17 +192,8 @@ const RegisterForm = () => {
                         )}
                     />
                     <Button className="w-100 btn btn-success mb-2" type="submit">
-                        Sing up
+                        Add
                     </Button>
-
-                    <div className="d-flex flex-column mb-4 pb-4">
-                        <div className="d-flex justify-content-between">
-                            <p className="mb-0 pe-5">Already have an account?</p>
-                            <Link className="text-decoration-none link-green ps-4" to={routes.LOGIN}>
-                                Sign in
-                            </Link>
-                        </div>
-                    </div>
                 </Form>
 
             </div>
@@ -235,4 +211,4 @@ const RegisterForm = () => {
     )
 }
 
-export default RegisterForm
+export default AddWorkerForm

@@ -45,7 +45,7 @@ const Navbar: FC = () => {
                   </NavLink>
                 </li>
                 <li className="sidebar-item">
-                  <NavLink className="sidebar-link" style={{ fontWeight: 'bold' }} to={routes.LOGIN}>
+                  <NavLink className="sidebar-link" style={{ fontWeight: 'bold' }} to={routes.WORKERS}>
                     Workers
                   </NavLink>
                 </li>
@@ -76,7 +76,7 @@ const Navbar: FC = () => {
                   <p className='font-weight-bold'>or</p>
                 </li>
                 <li className="sidebar-item">
-                  <NavLink className="btn btn-success" to={routes.SIGNUP}>
+                  <NavLink className="btn btn-dark" to={routes.SIGNUP}>
                     Sign Up
                   </NavLink>
                 </li>

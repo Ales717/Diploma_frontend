@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import * as API from 'api/Api'
 import { OrderType } from 'models/order'
 import { Link } from 'react-router-dom'
-import { routes } from 'constants/routesConstants'
+
 
 const ActiveOrders = () => {
     const queryClient = useQueryClient()
@@ -52,7 +52,7 @@ const ActiveOrders = () => {
                                                     <b>Costumer: </b>{order.costumer},
                                                     <b> Contact: </b>{order.contact},
                                                     <b> Oreder date </b>{order.date.toString()}
-                                                    <button onClick={() => handleDelete(order.id)}>Delete</button>
+                                                    <button className='btn btn-dark ms-2' onClick={() => handleDelete(order.id)}>Delete</button>
                                                 </Link>
 
                                             </li>
