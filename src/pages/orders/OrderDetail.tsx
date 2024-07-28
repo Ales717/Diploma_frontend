@@ -9,7 +9,6 @@ const OrderDetail = () => {
         () => API.fetchOrderById(orderId || '')
     )
 
-    console.log(data?.data[0].costumer)
     return (
         <div>
 

@@ -28,7 +28,6 @@ const AddWorkerForm = () => {
 
     const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
         const response = await API.createUser({ ...data, role: 'WORKER' })
-        console.log(response)
         if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
             setApiError(response.data.message)
             setShowError(true)

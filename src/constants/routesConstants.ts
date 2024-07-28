@@ -4,5 +4,6 @@ export enum routes {
   HOME = '/',
   ORDERS = '/orders',
   WORKERS = '/workers',
-  ADDWORKER = '/workers/addworker'
+  ADDWORKER = '/workers/addworker',
+  EQUIPMENT = '/equipment'
 }
