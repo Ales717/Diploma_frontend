@@ -55,7 +55,7 @@ const Navbar: FC = () => {
                   </NavLink>
                 </li>
                 <li className="sidebar-item">
-                  <NavLink className="sidebar-link" style={{ fontWeight: 'bold' }} to={routes.LOGIN}>
+                  <NavLink className="sidebar-link" style={{ fontWeight: 'bold' }} to={routes.SERVICE}>
                     Services
                   </NavLink>
                 </li>

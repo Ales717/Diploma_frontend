@@ -30,6 +30,9 @@ const Equipment = lazy(() => import('pages/equipment/index'))
 const AddEquipment = lazy(() => import('pages/equipment/addEquipment'))
 const UpdateEquipment = lazy(() => import('pages/equipment/updateEquipment'))
 
+const Service = lazy(() => import('pages/services/index'))
+const AddService = lazy(() => import('pages/services/addService'))
+const UpdateService = lazy(() => import('pages/services/updateService'))
 /* Restricted routes */
 const Login = lazy(() => import('pages/Login'))
 const Register = lazy(() => import('pages/Register'))
@@ -90,6 +93,21 @@ export const AppRoutes: AppRoute[] = [
     type: RouteType.PRIVATE,
     path: '/equipment/updateequipment/:id',
     children: <UpdateEquipment />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/service',
+    children: <Service />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/service/addservice',
+    children: <AddService />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/service/updateservice/:id',
+    children: <UpdateService />,
   },
   // Public Routes
   {

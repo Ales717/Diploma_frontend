@@ -53,7 +53,7 @@ const EquipmentList = () => {
                                                 <b> Type: </b>{equipment.type},
                                                 <b> Availability: </b>{equipment.availability ? 'Available' : 'Not Available'}
                                             </Link>
-                                            <button onClick={() => handleDelete(equipment.id)}>Delete</button>
+                                            <button className='btn btn-dark ms-2' onClick={() => handleDelete(equipment.id)}>Delete</button>
                                         </li>
                                     </div>
                                 ))}

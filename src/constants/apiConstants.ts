@@ -7,5 +7,6 @@ export enum apiRoutes {
   USERS_PREFIX = '/users',
   UPLOAD_AVATAR_IMAGE = '/users/upload',
   ORDER_PREFIX = '/order',
-  EQUIPMENT_PREFIX = '/equipment'
+  EQUIPMENT_PREFIX = '/equipment',
+  SERVICES_PREFIX = '/service'
 }
