@@ -15,7 +15,6 @@ const UpdateEquipmentForm = () => {
     const [showError, setShowError] = useState(false)
     const [loading, setLoading] = useState(true)
 
-    console.log(id)
 
     useEffect(() => {
         const loadEquipment = async () => {

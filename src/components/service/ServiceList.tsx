@@ -44,7 +44,7 @@ const ServiceList = () => {
             ) : (
                 <div className="d-flex flex-wrap gap-4 justify-content-start">
                     <ul className="list-group">
-                        {data?.map((service: ServiceType, index: number) => (
+                        {data?.data.map((service: ServiceType, index: number) => (
                             <div key={index} className="">
                                 <li className="list-group-item">
                                     <Link to={`/service/updateservice/${service.id}`}>

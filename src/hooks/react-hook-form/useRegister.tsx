@@ -9,6 +9,7 @@ export interface RegisterUserFields {
     password: string
     role?: string
     confirm_password: string
+    competences?: { [key: string]: string }
 }
 
 export const useRegisterForm = () => {
@@ -17,6 +18,7 @@ export const useRegisterForm = () => {
         last_name: Yup.string().notRequired(),
         email: Yup.string().email().required('Please enter a valid email'),
         role: Yup.string().default('ADMIN'),
+        competences: Yup.object().notRequired(),
         password: Yup.string()
             .matches(
                 /^(?=.*\d)[A-Za-z.\s_-]+[\w~@#$%^&*+=`|{}:;!.?"()[\]-]{6,}/,
@@ -39,6 +41,7 @@ export const useRegisterForm = () => {
             email: '',
             role: 'ADMIN',
             password: '',
+            competences: {},
             confirm_password: '',
         },
         mode: 'onSubmit',

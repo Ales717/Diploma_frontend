@@ -18,6 +18,7 @@ const AddWorkerForm = () => {
     const [showError, setShowError] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [competences, setCompetences] = useState<{ key: string, value: string }[]>([{ key: '', value: '' }])
 
     const togglePasswordVisibility = () => {
         setShowPassword(prevState => !prevState)
@@ -26,8 +27,28 @@ const AddWorkerForm = () => {
         setShowConfirmPassword(prevState => !prevState)
     }
 
+    const addCompetenceField = () => {
+        setCompetences([...competences, { key: '', value: '' }])
+    }
+
+    const removeCompetenceField = (index: number) => {
+        setCompetences(competences.filter((_, i) => i !== index))
+    }
+
+    const handleCompetenceChange = (index: number, field: 'key' | 'value', value: string) => {
+        const newCompetences = competences.slice()
+        newCompetences[index][field] = value
+        setCompetences(newCompetences)
+    }
+
     const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
-        const response = await API.createUser({ ...data, role: 'WORKER' })
+        const formattedCompetences = competences.reduce((acc, { key, value }) => {
+            if (key) acc[key] = value
+            return acc
+        }, {} as { [key: string]: string })
+
+        const response = await API.createUser({ ...data, role: 'WORKER', competences: formattedCompetences })
+
         if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
             setApiError(response.data.message)
             setShowError(true)
@@ -190,6 +211,41 @@ const AddWorkerForm = () => {
                             </Form.Group>
                         )}
                     />
+                    {competences.map((competence, index) => (
+                        <div className="row" key={index}>
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <FormLabel htmlFor={`competenceKey${index}`}>Competence Key</FormLabel>
+                                    <input
+                                        type="text"
+                                        className="form-control form-rounded"
+                                        placeholder="e.g. skills"
+                                        value={competence.key}
+                                        onChange={e => handleCompetenceChange(index, 'key', e.target.value)}
+                                    />
+                                </Form.Group>
+                            </div>
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <FormLabel htmlFor={`competenceValue${index}`}>Competence Value</FormLabel>
+                                    <input
+                                        type="text"
+                                        className="form-control form-rounded"
+                                        placeholder="e.g. truck driver"
+                                        value={competence.value}
+                                        onChange={e => handleCompetenceChange(index, 'value', e.target.value)}
+                                    />
+                                </Form.Group>
+                            </div>
+                            <div className="col-auto d-flex align-items-end">
+                                <Button variant="danger" onClick={() => removeCompetenceField(index)}>Remove</Button>
+                            </div>
+                        </div>
+                    ))}
+
+                    <Button variant="secondary" onClick={addCompetenceField} className="mb-3">
+                        Add Competence
+                    </Button>
                     <Button className="w-100 btn btn-success mb-2" type="submit">
                         Add
                     </Button>

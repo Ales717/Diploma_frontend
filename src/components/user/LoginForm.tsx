@@ -11,8 +11,6 @@ import { routes } from 'constants/routesConstants'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import Toast from 'react-bootstrap/Toast'
 import { BsEye, BsEyeSlash } from 'react-icons/bs'
-import { FaFacebook } from 'react-icons/fa'
-import { FcGoogle } from 'react-icons/fc'
 
 const LoginForm = () => {
     const navigate = useNavigate()
@@ -27,6 +25,8 @@ const LoginForm = () => {
 
     const onSubmit = handleSubmit(async (data: LoginUserFields) => {
         const response = await API.login(data)
+        const user = await API.currentUser()
+        const role = user.data.role
         if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
             setApiError(response.data.message)
             setShowError(true)
@@ -35,7 +35,12 @@ const LoginForm = () => {
             setShowError(true)
         } else {
             authStore.login(response.data)
-            navigate('/')
+            if (role === 'ADMIN') {
+                navigate('/')
+            } else {
+                navigate('/workers/controlpanel')
+            }
+
         }
     })
 

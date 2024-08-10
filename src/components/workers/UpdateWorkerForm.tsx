@@ -4,12 +4,8 @@ import { Controller } from 'react-hook-form'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import { useCreateUpdateUserForm, CreateUpdateUserFields } from 'hooks/react-hook-form/useCreateUpdateUserForm'
 import { fetchWorkerById, updateWorker } from 'api/Api'
-import { StatusCode } from 'constants/errorConstants'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import Toast from 'react-bootstrap/Toast'
-import { UserType } from 'models/auth'
-import { useQuery } from 'react-query'
-import * as API from 'api/Api'
 
 const UpdateWorkerForm = () => {
     const { id } = useParams()
@@ -18,12 +14,18 @@ const UpdateWorkerForm = () => {
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [competences, setCompetences] = useState<{ key: string, value: string }[]>([])
 
     useEffect(() => {
         const loadWorker = async () => {
             try {
                 const response = await fetchWorkerById(id!)
-                reset(response.data)
+                const workerData = response.data
+                reset(workerData)
+                if (workerData.competences) {
+                    const competencesArray = Object.entries(workerData.competences).map(([key, value]) => ({ key, value: value as string }))
+                    setCompetences(competencesArray)
+                }
                 setLoading(false)
             } catch (error) {
                 setApiError('An error occurred while fetching the worker details')
@@ -34,9 +36,27 @@ const UpdateWorkerForm = () => {
         loadWorker()
     }, [id, reset])
 
+    const handleCompetenceChange = (index: number, field: 'key' | 'value', value: string) => {
+        const newCompetences = competences.slice()
+        newCompetences[index][field] = value
+        setCompetences(newCompetences)
+    }
+
+    const addCompetenceField = () => {
+        setCompetences([...competences, { key: '', value: '' }])
+    }
+
+    const removeCompetenceField = (index: number) => {
+        setCompetences(competences.filter((_, i) => i !== index))
+    }
+
     const onSubmit = async (data: CreateUpdateUserFields) => {
         try {
-            await updateWorker(id!, data)
+            const formattedCompetences = competences.reduce((acc, { key, value }) => {
+                if (key) acc[key] = value
+                return acc
+            }, {} as { [key: string]: string })
+            await updateWorker(id!, { ...data, competences: formattedCompetences })
             navigate('/workers')
         } catch (error) {
             setApiError('An error occurred while updating the worker')
@@ -64,7 +84,6 @@ const UpdateWorkerForm = () => {
                                     type="text"
                                     className={errors.first_name ? 'form-control is-invalid' : 'form-control'}
                                     placeholder="John"
-                                    defaultValue={field.value}
                                 />
                                 {errors.first_name && (
                                     <div className="invalid-feedback">
@@ -85,7 +104,6 @@ const UpdateWorkerForm = () => {
                                     type="text"
                                     className={errors.last_name ? 'form-control is-invalid' : 'form-control'}
                                     placeholder="Doe"
-                                    defaultValue={field.value}
                                 />
                                 {errors.last_name && (
                                     <div className="invalid-feedback">
@@ -106,7 +124,6 @@ const UpdateWorkerForm = () => {
                                     type="email"
                                     className={errors.email ? 'form-control is-invalid' : 'form-control'}
                                     placeholder="example@gmail.com"
-                                    defaultValue={field.value}
                                 />
                                 {errors.email && (
                                     <div className="invalid-feedback">
@@ -156,6 +173,42 @@ const UpdateWorkerForm = () => {
                             </Form.Group>
                         )}
                     />
+
+                    {competences.map((competence, index) => (
+                        <div className="row" key={index}>
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <FormLabel htmlFor={`competenceKey${index}`}>Competence Key</FormLabel>
+                                    <input
+                                        type="text"
+                                        className="form-control form-rounded"
+                                        placeholder="e.g. skills"
+                                        value={competence.key}
+                                        onChange={e => handleCompetenceChange(index, 'key', e.target.value)}
+                                    />
+                                </Form.Group>
+                            </div>
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <FormLabel htmlFor={`competenceValue${index}`}>Competence Value</FormLabel>
+                                    <input
+                                        type="text"
+                                        className="form-control form-rounded"
+                                        placeholder="e.g. truck driver"
+                                        value={competence.value}
+                                        onChange={e => handleCompetenceChange(index, 'value', e.target.value)}
+                                    />
+                                </Form.Group>
+                            </div>
+                            <div className="col-auto d-flex align-items-end">
+                                <Button variant="danger" onClick={() => removeCompetenceField(index)}>Remove</Button>
+                            </div>
+                        </div>
+                    ))}
+
+                    <Button variant="secondary" onClick={addCompetenceField} className="mb-3">
+                        Add Competence
+                    </Button>
 
                     <Button type="submit" className="w-100 btn btn-primary">Update Worker</Button>
                 </Form>

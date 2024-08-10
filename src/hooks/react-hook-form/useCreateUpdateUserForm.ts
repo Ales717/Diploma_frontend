@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { UserType } from 'models/auth'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
+import { UserType } from 'models/auth'
 
 export interface CreateUpdateUserFields {
     first_name: string
@@ -10,6 +10,7 @@ export interface CreateUpdateUserFields {
     password?: string
     role: string
     availability: boolean
+    competences: { [key: string]: string }
 }
 
 interface Props {
@@ -24,6 +25,7 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
         password: Yup.string().min(6, 'Password must be at least 6 characters'),
         role: Yup.string().required('Role is required'),
         availability: Yup.boolean().required('Availability is required'),
+        competences: Yup.object().notRequired(),
     })
 
     const {
@@ -39,6 +41,7 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
             password: '',
             role: '',
             availability: true,
+            competences: {},
             ...defaultValues,
         },
         mode: 'onSubmit',

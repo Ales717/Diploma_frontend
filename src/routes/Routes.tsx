@@ -21,10 +21,12 @@ const Home = lazy(() => import('pages/Home'))
 
 const Orders = lazy(() => import('pages/orders/index'))
 const OrderDetail = lazy(() => import('pages/orders/OrderDetail'))
+const CreateOrder = lazy(() => import('pages/orders/createOrder'))
 
 const Workers = lazy(() => import('pages/workers/index'))
 const AddWorkers = lazy(() => import('pages/workers/addWorker'))
 const UpdateWorkers = lazy(() => import('pages/workers/updateWorker'))
+const WorkerControlPanel = lazy(() => import('pages/workers/controlePanel'))
 
 const Equipment = lazy(() => import('pages/equipment/index'))
 const AddEquipment = lazy(() => import('pages/equipment/addEquipment'))
@@ -66,6 +68,11 @@ export const AppRoutes: AppRoute[] = [
   },
   {
     type: RouteType.PRIVATE,
+    path: '/orders/createorder',
+    children: <CreateOrder />,
+  },
+  {
+    type: RouteType.PRIVATE,
     path: '/workers',
     children: <Workers />,
   },
@@ -78,6 +85,11 @@ export const AppRoutes: AppRoute[] = [
     type: RouteType.PRIVATE,
     path: 'workers/updateworker/:id',
     children: <UpdateWorkers />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/workers/controlpanel',
+    children: <WorkerControlPanel />,
   },
   {
     type: RouteType.PRIVATE,

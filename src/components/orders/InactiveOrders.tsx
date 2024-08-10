@@ -4,19 +4,19 @@ import { OrderType } from 'models/order'
 import { Link } from 'react-router-dom'
 
 
-const ActiveOrders = () => {
+const InactiveOrders = () => {
     const queryClient = useQueryClient()
 
     const { data, isLoading } = useQuery(
-        ['fetchActiveOrders'],
-        () => API.fetchActiveOrders(),
+        ['fetchInactiveOrders'],
+        () => API.fetchInactiveOrders(),
     )
 
     const mutation = useMutation(
         (orderId: string) => API.deleteOrder(orderId),
         {
             onSuccess: () => {
-                queryClient.invalidateQueries(['fetchActiveOrders'])
+                queryClient.invalidateQueries(['fetchInactiveOrders'])
             },
         },
     )
@@ -70,4 +70,4 @@ const ActiveOrders = () => {
     )
 }
 
-export default ActiveOrders
+export default InactiveOrders

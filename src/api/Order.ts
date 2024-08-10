@@ -9,7 +9,10 @@ export const fetchOrders = async () =>
 export const fetchActiveOrders = async () =>
     apiRequest<undefined, OrderType[]>('get', `${apiRoutes.ORDER_PREFIX}/active`)
 
-export const createOrder = async (data: CreateUpdateOrderFields) =>
+export const fetchInactiveOrders = async () =>
+    apiRequest<undefined, OrderType[]>('get', `${apiRoutes.ORDER_PREFIX}/inactive`)
+
+export const create = async (data: CreateUpdateOrderFields) =>
     apiRequest<CreateUpdateOrderFields, OrderType>('post', apiRoutes.ORDER_PREFIX, data)
 
 export const fetchOrderById = async (orderId: string) =>

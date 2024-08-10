@@ -1,25 +1,88 @@
-import React, { useState } from 'react'
-import { Controller } from 'react-hook-form'
+import React, { useState, useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import * as API from 'api/Api'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import Toast from 'react-bootstrap/Toast'
-import { useCreateUpdateServiceForm, CreateUpdateServiceFields } from 'hooks/react-hook-form/useCreateUpdateServiceForm'
+import { CreateUpdateServiceFields } from 'hooks/react-hook-form/useCreateUpdateServiceForm'
+
+interface Equipment {
+    id: string
+    name: string
+}
+
+interface Competence {
+    competence: string
+    type: string
+}
 
 const AddServiceForm = () => {
     const navigate = useNavigate()
-    const { handleSubmit, errors, control, reset } = useCreateUpdateServiceForm({})
+    const { handleSubmit, formState: { errors }, control, setValue } = useForm<CreateUpdateServiceFields>()
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
+    const [equipmentList, setEquipmentList] = useState<Equipment[]>([])
+    const [selectedEquipment, setSelectedEquipment] = useState<Record<string, string>>({})
+    const [competences, setCompetences] = useState<{ competence: string, type: string }[]>([])
+
+    useEffect(() => {
+        const loadEquipment = async () => {
+            try {
+                const response = await API.fetchEquipment()
+                setEquipmentList(response.data)
+            } catch (error) {
+                console.error('Error fetching equipment:', error)
+            }
+        }
+        loadEquipment()
+    }, [])
+
+    const handleEquipmentDoubleClick = (equipmentId: string) => {
+        const equipment = equipmentList.find(eq => eq.id === equipmentId)
+        if (equipment) {
+            setSelectedEquipment(prevSelected => {
+                const newSelected = {
+                    ...prevSelected,
+                    [equipmentId]: equipment.name
+                }
+                setValue('requiredEquipment', JSON.stringify(newSelected))
+                return newSelected
+            })
+        }
+    }
+
+    const handleAddCompetence = () => {
+        setCompetences([...competences, { competence: '', type: '' }])
+    }
+
+    const handleRemoveCompetence = (index: number) => {
+        const newCompetences = competences.slice()
+        newCompetences.splice(index, 1)
+        setCompetences(newCompetences)
+    }
+
+    const handleCompetenceChange = (index: number, field: keyof Competence, value: string) => {
+        const newCompetences = competences.slice()
+        newCompetences[index] = {
+            ...newCompetences[index],
+            [field]: value
+        }
+        setCompetences(newCompetences)
+        setValue('necessaryCompetences', JSON.stringify(newCompetences.reduce((acc, curr) => {
+            acc[curr.competence] = curr.type
+            return acc
+        }, {} as Record<string, string>)))
+    }
 
     const onSubmit = async (data: CreateUpdateServiceFields) => {
         try {
-            // Pretvorba v JSON
-            data.requiredEquipment = JSON.parse(data.requiredEquipment)
-            data.necessaryCompetences = JSON.parse(data.necessaryCompetences)
-
-            await API.createService(data)
+            const serviceData = {
+                ...data,
+                requiredEquipment: JSON.parse(data.requiredEquipment || '{}'),
+                necessaryCompetences: JSON.parse(data.necessaryCompetences || '{}')
+            }
+            await API.createService(serviceData)
             navigate('/service')
         } catch (error) {
             setApiError('An error occurred while creating the service')
@@ -72,16 +135,33 @@ const AddServiceForm = () => {
                             </Form.Group>
                         )}
                     />
+                    <Form.Group className="mb-3">
+                        <FormLabel>Available Equipment (Double click to select)</FormLabel>
+                        <ul className="list-group">
+                            {equipmentList.map(equipment => (
+                                <li
+                                    key={equipment.id}
+                                    className="list-group-item"
+                                    onDoubleClick={() => handleEquipmentDoubleClick(equipment.id)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    {equipment.name}
+                                </li>
+                            ))}
+                        </ul>
+                    </Form.Group>
                     <Controller
                         control={control}
                         name="requiredEquipment"
                         render={({ field }) => (
                             <Form.Group className="mb-3">
-                                <FormLabel htmlFor="requiredEquipment">Required Equipment</FormLabel>
+                                <FormLabel htmlFor="requiredEquipment">Selected Equipment</FormLabel>
                                 <textarea
                                     {...field}
                                     className={errors.requiredEquipment ? 'form-control is-invalid' : 'form-control'}
-                                    placeholder='{"equipment1":"type1","equipment2":"type2"}'
+                                    value={JSON.stringify(selectedEquipment, null, 2)}
+                                    placeholder='{"id1":"name1","id2":"name2"}'
+                                    readOnly
                                 />
                                 {errors.requiredEquipment && (
                                     <div className="invalid-feedback">
@@ -91,25 +171,29 @@ const AddServiceForm = () => {
                             </Form.Group>
                         )}
                     />
-                    <Controller
-                        control={control}
-                        name="necessaryCompetences"
-                        render={({ field }) => (
-                            <Form.Group className="mb-3">
-                                <FormLabel htmlFor="necessaryCompetences">Necessary Competences</FormLabel>
-                                <textarea
-                                    {...field}
-                                    className={errors.necessaryCompetences ? 'form-control is-invalid' : 'form-control'}
-                                    placeholder='{"competence1":"typeA","competence2":"typeB"}'
+                    <Form.Group className="mb-3">
+                        <FormLabel>Necessary Competences</FormLabel>
+                        {competences.map((comp, index) => (
+                            <div key={index} className="d-flex mb-2">
+                                <input
+                                    type="text"
+                                    className="form-control me-2"
+                                    placeholder="Competence"
+                                    value={comp.competence}
+                                    onChange={(e) => handleCompetenceChange(index, 'competence', e.target.value)}
                                 />
-                                {errors.necessaryCompetences && (
-                                    <div className="invalid-feedback">
-                                        {errors.necessaryCompetences.message}
-                                    </div>
-                                )}
-                            </Form.Group>
-                        )}
-                    />
+                                <input
+                                    type="text"
+                                    className="form-control me-2"
+                                    placeholder="Type"
+                                    value={comp.type}
+                                    onChange={(e) => handleCompetenceChange(index, 'type', e.target.value)}
+                                />
+                                <Button variant="danger" onClick={() => handleRemoveCompetence(index)}>Remove</Button>
+                            </div>
+                        ))}
+                        <Button variant="secondary" onClick={handleAddCompetence}>Add Competence</Button>
+                    </Form.Group>
                     <Button type="submit" className="w-100 btn btn-primary">Add Service</Button>
                 </Form>
             </div>
@@ -126,4 +210,5 @@ const AddServiceForm = () => {
         </>
     )
 }
+
 export default AddServiceForm
